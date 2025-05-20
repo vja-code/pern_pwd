@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:16
+    container_name: pern_db
+    environment:
+      POSTGRES_USER: devuser
+      POSTGRES_PASSWORD: devpass
+      POSTGRES_DB: devdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    image: node:18
+    container_name: pern_backend
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    ports:
+      - "5000:5000"
+    stdin_open: true
+    tty: true
+    command: bash
+
+  frontend:
+    image: node:18
+    container_name: pern_frontend
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    tty: true
+    command: bash
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
+
